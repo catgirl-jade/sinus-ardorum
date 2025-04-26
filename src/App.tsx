@@ -127,12 +127,10 @@ function MissionTable({
     const r4 = m.research4 * bonus;
 
     const score = r1 * totalImportance[1] + r2 * totalImportance[2] + r3 * totalImportance[3] + r4 * totalImportance[4];
-
-    return { mission: m, score, r1, r2, r3, r4, progress };
-  }).sort((a, b) => b.score - a.score);
+    const scorePerSecond = score / progress.time;
+    return { mission: m, score, r1, r2, r3, r4, progress, scorePerSecond };
+  }).sort((a, b) => b.scorePerSecond - a.scorePerSecond );
   
-  console.log(missionsWithScores);
-
   return (
     <div className="overflow-x-auto w-4/5">
       <table className="min-w-full bg-white border">
@@ -149,10 +147,11 @@ function MissionTable({
             <th className="border p-2">Rank</th>
             <th className="border p-2">Time</th>
             <th className="border p-2">Score</th>
+            <th className="border p-2">Score/s</th>
           </tr>
         </thead>
         <tbody>
-          {missionsWithScores.map(({ mission, score, r1, r2, r3, r4, progress }, _) => (
+          {missionsWithScores.map(({ mission, score, r1, r2, r3, r4, progress, scorePerSecond }, _) => (
             <tr key={mission.id}>
               <td className="border p-2">{missionClassMap[mission.missionClass] || ""}</td>
               <td className="border p-2">{mission.name.replace("", circledArrow)}</td>
@@ -208,6 +207,7 @@ function MissionTable({
                 />
               </td>
               <td className="border p-2">{score.toFixed(3)}</td>
+              <td className="border p-2">{scorePerSecond.toFixed(3)}</td>
             </tr>
           ))}
         </tbody>

@@ -292,7 +292,7 @@ function ResearchSummary({
 
 
 async function fetchCsv(path: string) {
-  const response = await fetch(path);
+  const response = await fetch(`${import.meta.env.BASE_URL}${path}`);
   const text = await response.text();
   const { data } = Papa.parse<string[]>(text, {
     skipEmptyLines: true,

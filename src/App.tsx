@@ -325,7 +325,7 @@ function parseMissionRewards(data: string[][]) {
     const pairs = [
       [Number(row[8]), Number(row[9])],
       [Number(row[11]), Number(row[12])],
-      [Number(row[13]), Number(row[14])],
+      [Number(row[14]), Number(row[15])],
     ];
     for (const [type, qty] of pairs) {
       if (type >= 1 && type <= 4 && !isNaN(qty)) {

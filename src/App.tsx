@@ -412,7 +412,7 @@ export default function App() {
         const correctedJobId = rawJobId - 1;
         const job = jobMap.get(correctedJobId);
         const reward = rewardMap.get(rewardId);
-        const isCritical = (row[13] != 0);
+        const isCritical = (Number(row[13]) != 0);
         if (!job || !reward) continue;
 
         missionDisplays.push({

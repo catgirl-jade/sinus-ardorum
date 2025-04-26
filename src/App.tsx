@@ -31,6 +31,7 @@ interface MissionDisplay {
   research4: number;
   jobAbbreviation: string;
   missionClass: number;
+  isCritical: boolean;
 }
 
 // Represents research values for different tiers and levels
@@ -153,7 +154,7 @@ function MissionTable({
         <tbody>
           {missionsWithScores.map(({ mission, score, r1, r2, r3, r4, progress, scorePerSecond }, _) => (
             <tr key={mission.id}>
-              <td className="border p-2">{missionClassMap[mission.missionClass] || ""}</td>
+              <td className="border p-2">{mission.isCritical ? "Critical" : missionClassMap[mission.missionClass] || ""}</td>
               <td className="border p-2">{mission.name.replace("", circledArrow)}</td>
               <td className="border p-2">{mission.cosmocredits}</td>
               <td className="border p-2">{mission.lunarcredits}</td>
@@ -411,7 +412,7 @@ export default function App() {
         const correctedJobId = rawJobId - 1;
         const job = jobMap.get(correctedJobId);
         const reward = rewardMap.get(rewardId);
-
+        const isCritical = (row[13] != 0);
         if (!job || !reward) continue;
 
         missionDisplays.push({
@@ -425,6 +426,7 @@ export default function App() {
           research4: reward.researchRewards[4],
           jobAbbreviation: job.abbreviation,
           missionClass,
+          isCritical,
         });
       }
 

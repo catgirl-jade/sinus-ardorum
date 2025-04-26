@@ -130,7 +130,14 @@ function MissionTable({
     const score = r1 * totalImportance[1] + r2 * totalImportance[2] + r3 * totalImportance[3] + r4 * totalImportance[4];
     const scorePerSecond = score / progress.time;
     return { mission: m, score, r1, r2, r3, r4, progress, scorePerSecond };
-  }).sort((a, b) => b.scorePerSecond - a.scorePerSecond );
+  }).sort((a, b) => {
+    // First prioritize missions with time != 1
+    if (a.progress.time !== 1 && b.progress.time === 1) return -1;
+    if (a.progress.time === 1 && b.progress.time !== 1) return 1;
+    
+    // Then sort by scorePerSecond
+    return b.scorePerSecond - a.scorePerSecond;
+  });
   
   return (
     <div className="overflow-x-auto w-4/5">

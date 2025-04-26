@@ -1,0 +1,4 @@
+https://raw.githubusercontent.com/xivapi/ffxiv-datamining/refs/heads/master/csv/WKSCosmoToolDataAmount.csv
+https://raw.githubusercontent.com/xivapi/ffxiv-datamining/refs/heads/master/csv/WKSMissionUnit.csv
+https://raw.githubusercontent.com/xivapi/ffxiv-datamining/refs/heads/master/csv/WKSMissionReward.csv
+https://raw.githubusercontent.com/xivapi/ffxiv-datamining/refs/heads/master/csv/ClassJob.csv

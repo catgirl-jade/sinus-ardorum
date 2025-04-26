@@ -2,6 +2,47 @@
 import { useEffect, useState } from "react";
 import Papa from "papaparse";
 
+// Represents a job class in the game
+interface ClassJob {
+  id: number;
+  abbreviation: string;
+  name: string;
+}
+
+// Represents rewards for completing a mission
+interface MissionReward {
+  id: number;
+  cosmocredits: number;
+  lunarcredits: number;
+  researchRewards: {
+    [type: number]: number;
+  };
+}
+
+// Represents a mission with all relevant display data
+interface MissionDisplay {
+  id: number;
+  name: string;
+  cosmocredits: number;
+  lunarcredits: number;
+  research1: number;
+  research2: number;
+  research3: number;
+  research4: number;
+  jobAbbreviation: string;
+  missionClass: number;
+}
+
+// Represents research values for different tiers and levels
+interface ResearchValues {
+  required: {
+    [tier: string]: number[];
+  };
+  max: {
+    [tier: string]: number[];
+  };
+}
+
 function Tabs({ jobs, activeJob, setActiveJob }: { jobs: string[], activeJob: string, setActiveJob: (job: string) => void }) {
   return (
     <div className="flex flex-wrap gap-2 mb-6">
@@ -37,7 +78,7 @@ function MissionTable({
   level: number,
   research: { [key: string]: number },
   missionProgress: { [key: string]: { rank: string; time: number } },
-  setMissionProgress: (val: { [key: string]: { rank: string; time: number } }) => void,
+  setMissionProgress: React.Dispatch<React.SetStateAction<{ [key: string]: { rank: string; time: number } }>>,
 }) {
   if (!researchValues) return null;
 
@@ -75,7 +116,7 @@ function MissionTable({
   };
   const circledArrow = "⮯";
 
-  const missionsWithScores = missions.map((m, idx) => {
+  const missionsWithScores = missions.map((m, _) => {
     const progress = missionProgress[m.id] || { rank: "bronze", time: 1 };
     const multipliers: { [key: string]: number } = { none: 0, bronze: 1, silver: 4, gold: 5 };
     const bonus = multipliers[progress.rank] ?? 1;
@@ -111,7 +152,7 @@ function MissionTable({
           </tr>
         </thead>
         <tbody>
-          {missionsWithScores.map(({ mission, score, r1, r2, r3, r4, progress }, idx) => (
+          {missionsWithScores.map(({ mission, score, r1, r2, r3, r4, progress }, _) => (
             <tr key={mission.id}>
               <td className="border p-2">{missionClassMap[mission.missionClass] || ""}</td>
               <td className="border p-2">{mission.name.replace("", circledArrow)}</td>
@@ -322,13 +363,13 @@ export default function App() {
   const [activeJob, setActiveJob] = useState<string>("");
   const [researchValues, setResearchValues] = useState<ResearchValues | null>(null);
   const [jobLevels, setJobLevels] = useState<{ [job: string]: number }>(
-    localStorage.getItem('jobLevels') ? JSON.parse(localStorage.getItem('jobLevels')) : {}
+    localStorage.getItem('jobLevels') ? JSON.parse(localStorage.getItem('jobLevels') || "{}") : {}
   );
   const [jobResearch, setJobResearch] = useState<{ [job: string]: { [key: string]: number } }>(
-    localStorage.getItem('jobResearch') ? JSON.parse(localStorage.getItem('jobResearch')) : {}
+    localStorage.getItem('jobResearch') ? JSON.parse(localStorage.getItem('jobResearch') || "{}" ) : {}
   );
   const [missionProgress, setMissionProgress] = useState<{ [id: string]: { rank: string; time: number } }>(
-    localStorage.getItem('missionProgress') ? JSON.parse(localStorage.getItem('missionProgress')) : {}
+    localStorage.getItem('missionProgress') ? JSON.parse(localStorage.getItem('missionProgress') || "{}" ) : {}
   );
 
   useEffect(() => {

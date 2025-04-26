@@ -178,7 +178,12 @@ function MissionTable({
                   {mission.research4}{mission.research4 != r4 && ` (${r4})`}
                 </td>
               )}
-              <td className="border p-2">
+              <td className={`border p-2 ${
+                progress.rank === 'gold' ? 'bg-yellow-100' : 
+                progress.rank === 'silver' ? 'bg-gray-200' : 
+                progress.rank === 'bronze' ? 'bg-amber-100' : 
+                'bg-white'
+              }`}>
                 <select
                   value={progress.rank}
                   onChange={(e) =>{

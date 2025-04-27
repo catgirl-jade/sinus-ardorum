@@ -147,10 +147,10 @@ function MissionTable({
     const multipliers: { [key: string]: number } = { none: 0, bronze: 1, silver: 4, gold: 5 };
     const bonus = multipliers[progress.rank] ?? 1;
 
-    const r1 = Math.min(m.research1 * bonus * ((100+dataRate) / 100), remainingRequired['I'] + remainingMax['I']);
-    const r2 = Math.min(m.research2 * bonus * ((100+dataRate) / 100), remainingRequired['III'] + remainingMax['II']);
-    const r3 = Math.min(m.research3 * bonus * ((100+dataRate) / 100), remainingRequired['III'] + remainingMax['III']);
-    const r4 = Math.min(m.research4 * bonus * ((100+dataRate) / 100), remainingRequired['IV'] + remainingMax['IV']);
+    const r1 = m.isCritical ? m.research1 : Math.min(m.research1 * bonus * ((100+dataRate) / 100), remainingRequired['I'] + remainingMax['I']);
+    const r2 = m.isCritical ? m.research2 : Math.min(m.research2 * bonus * ((100+dataRate) / 100), remainingRequired['III'] + remainingMax['II']);
+    const r3 = m.isCritical ? m.research3 : Math.min(m.research3 * bonus * ((100+dataRate) / 100), remainingRequired['III'] + remainingMax['III']);
+    const r4 = m.isCritical ? m.research4 : Math.min(m.research4 * bonus * ((100+dataRate) / 100), remainingRequired['IV'] + remainingMax['IV']);
 
     const score = r1 * totalImportance[1] + r2 * totalImportance[2] + r3 * totalImportance[3] + r4 * totalImportance[4];
     const scorePerSecond = score / progress.time;
@@ -216,7 +216,7 @@ function MissionTable({
                 progress.rank === 'bronze' ? 'bg-amber-100' : 
                 'bg-white'
               }`}>
-                <select
+              <select
                   value={progress.rank}
                   onChange={(e) =>{
                     setMissionProgress(prev => ({
@@ -286,7 +286,9 @@ function ResearchSummary({
           min={1}
           max={9}
           value={level}
-          onChange={(e) => setLevel(Number(e.target.value))}
+          onChange={(e) => {
+            setLevel(Number(e.target.value));
+          }}
           className="w-full p-2 border rounded"
         />
       </div>

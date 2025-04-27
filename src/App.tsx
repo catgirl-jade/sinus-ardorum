@@ -44,6 +44,30 @@ interface ResearchValues {
   };
 }
 
+function DataRate({ levels, setDataRate }: {
+  levels: { [key: string]: number },
+  setDataRate: React.Dispatch<React.SetStateAction<number>>,
+}) {
+  // Array of data analysis rates based on completed research levels
+  const dataRates = [0, 50, 50, 100, 100, 150, 150, 150, 150, 150, 150, 150];
+  
+  // Count how many research tiers are at level 9
+  const completedTiers = Object.values(levels).filter(level => level >= 9).length;
+  
+  // Get the corresponding data rate
+  const rate = dataRates[completedTiers] || 0;
+  setDataRate(rate); 
+  return (
+    <div className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white p-1 mb-6 rounded-sm shadow-md">
+      <div className="flex justify-between items-center">
+        <div className="text-lg font-semibold">
+          Rate of novice level data analysis: <span className="text-xl font-bold">{rate}%</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Tabs({ jobs, activeJob, setActiveJob }: { jobs: string[], activeJob: string, setActiveJob: (job: string) => void }) {
   return (
     <div className="flex flex-wrap gap-2 mb-6">
@@ -71,6 +95,7 @@ function MissionTable({
   research,
   missionProgress,
   setMissionProgress,
+  dataRate
 }: {
   missions: MissionDisplay[],
   activeJob: string,
@@ -80,9 +105,9 @@ function MissionTable({
   research: { [key: string]: number },
   missionProgress: { [key: string]: { rank: string; time: number } },
   setMissionProgress: React.Dispatch<React.SetStateAction<{ [key: string]: { rank: string; time: number } }>>,
+  dataRate: number,
 }) {
   if (!researchValues) return null;
-
   const remainingRequired: { [key: string]: number } = {};
   const remainingMax: { [key: string]: number } = {};
   const tiers = ['I', 'II', 'III', 'IV'];
@@ -122,10 +147,10 @@ function MissionTable({
     const multipliers: { [key: string]: number } = { none: 0, bronze: 1, silver: 4, gold: 5 };
     const bonus = multipliers[progress.rank] ?? 1;
 
-    const r1 = m.research1 * bonus;
-    const r2 = m.research2 * bonus;
-    const r3 = m.research3 * bonus;
-    const r4 = m.research4 * bonus;
+    const r1 = Math.min(m.research1 * bonus * ((100+dataRate) / 100), remainingRequired['I'] + remainingMax['I']);
+    const r2 = Math.min(m.research2 * bonus * ((100+dataRate) / 100), remainingRequired['III'] + remainingMax['II']);
+    const r3 = Math.min(m.research3 * bonus * ((100+dataRate) / 100), remainingRequired['III'] + remainingMax['III']);
+    const r4 = Math.min(m.research4 * bonus * ((100+dataRate) / 100), remainingRequired['IV'] + remainingMax['IV']);
 
     const score = r1 * totalImportance[1] + r2 * totalImportance[2] + r3 * totalImportance[3] + r4 * totalImportance[4];
     const scorePerSecond = score / progress.time;
@@ -384,6 +409,7 @@ export default function App() {
   const [missionProgress, setMissionProgress] = useState<{ [id: string]: { rank: string; time: number } }>(
     localStorage.getItem('missionProgress') ? JSON.parse(localStorage.getItem('missionProgress') || "{}" ) : {}
   );
+  const [dataRate, setDataRate] = useState<number>(0);
 
   useEffect(() => {
     localStorage.setItem('jobLevels', JSON.stringify(jobLevels));
@@ -472,6 +498,7 @@ export default function App() {
     <div className="min-h-screen bg-gray-100 p-6">
       <h1 className="text-3xl font-bold mb-6">Cosmic Research Helper</h1>
       <Tabs jobs={jobs} activeJob={activeJob} setActiveJob={setActiveJob} />
+      <DataRate levels={jobLevels} setDataRate={setDataRate}/>
       <div className="flex">
         <ResearchSummary
           activeJob={activeJob}
@@ -490,6 +517,7 @@ export default function App() {
           research={research}
           missionProgress={missionProgress}
           setMissionProgress={setMissionProgress}
+          dataRate={dataRate}
         />
       </div>
     </div>

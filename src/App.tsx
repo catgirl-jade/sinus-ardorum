@@ -369,7 +369,7 @@ function parseMissionRewards(data: string[][]) {
     ];
     for (const [type, qty] of pairs) {
       if (type >= 1 && type <= 4 && !isNaN(qty)) {
-        researchRewards[type] += qty;
+        researchRewards[type] = qty;
       }
     }
     map.set(id, { id, cosmocredits, lunarcredits, researchRewards });
